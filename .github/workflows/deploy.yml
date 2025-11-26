@@ -67,7 +67,7 @@ jobs:
           cat > .kamal/secrets << EOF
           KAMAL_REGISTRY_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          DATABASE_URL=postgresql://nextjs_app:${{ secrets.POSTGRES_PASSWORD }}@host.docker.internal:5433/nextjs_kamal_demo_production
+          DATABASE_URL=postgresql://nextjs_app:${{ secrets.POSTGRES_PASSWORD }}@nextjs-kamal-demo-postgres:5432/nextjs_kamal_demo_production
           EOF
 
       - name: Boot PostgreSQL accessory (if not already running)
