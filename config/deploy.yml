@@ -16,6 +16,8 @@ servers:
     options:
       # Memory limit for the container (adjust based on your needs)
       memory: 512m
+      # Allow container to reach host services via host.docker.internal
+      add-host: host.docker.internal:host-gateway
 
 # Docker registry configuration
 registry:
