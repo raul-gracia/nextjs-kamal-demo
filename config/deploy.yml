@@ -1,0 +1,113 @@
+# Kamal 2.0 Configuration for Next.js Application
+# Deployed alongside existing Digital Chronos app on the same server
+# Documentation: https://kamal-deploy.org/docs/
+
+# Service identifier - used as container name prefix
+service: nextjs-kamal-demo
+
+# Docker image name (pushed to configured registry)
+image: raulgracia/nextjs-kamal-demo
+
+# Target servers for deployment
+servers:
+  web:
+    hosts:
+      - 46.224.10.99
+    options:
+      # Memory limit for the container (adjust based on your needs)
+      memory: 512m
+
+# Docker registry configuration
+registry:
+  server: docker.io
+  username: raulgracia
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# SSH configuration for server access
+ssh:
+  user: deploy
+
+# Kamal Proxy configuration for routing and SSL
+# Note: kamal-proxy is already running from Digital Chronos deployment
+proxy:
+  # Domain for this application (host-based routing)
+  host: kamal-demo.digitalchronos.app
+
+  # Application container port (Next.js default)
+  app_port: 3000
+
+  # Enable automatic SSL via Let's Encrypt
+  # kamal-proxy handles certificate acquisition and renewal
+  ssl: true
+
+  # Health check configuration for zero-downtime deployments
+  healthcheck:
+    path: /api/health
+    interval: 3
+    timeout: 3
+
+  # Response timeout in seconds
+  response_timeout: 30
+
+# Environment variables
+env:
+  # Clear (non-secret) environment variables
+  clear:
+    NODE_ENV: production
+    PORT: "3000"
+    # Next.js specific
+    NEXT_TELEMETRY_DISABLED: "1"
+  # Secret environment variables (loaded from .kamal/secrets)
+  secret:
+    - DATABASE_URL
+
+# Docker builder configuration
+builder:
+  # Target architecture for the server
+  arch: amd64
+  # Build context (project root)
+  context: .
+
+# Accessories (additional services)
+accessories:
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    host: 46.224.10.99
+    # Bind to localhost only for security (container can access via host network)
+    port: "127.0.0.1:5433:5432"
+    env:
+      clear:
+        POSTGRES_DB: nextjs_kamal_demo_production
+        POSTGRES_USER: nextjs_app
+      secret:
+        - POSTGRES_PASSWORD
+    # Persistent data directory
+    directories:
+      - nextjs-postgres-data:/var/lib/postgresql/data
+    options:
+      restart: unless-stopped
+      memory: 256m
+
+# Container logging configuration
+logging:
+  driver: json-file
+  options:
+    max-size: 50m
+    max-file: "3"
+
+# Retain last 3 containers for quick rollback
+retain_containers: 3
+
+# Minimum Kamal version required
+minimum_version: 2.0.0
+
+# Deployment timeout in seconds
+deploy_timeout: 120
+
+# Drain timeout for graceful shutdown
+drain_timeout: 30
+
+# Readiness delay before health checks start
+readiness_delay: 5

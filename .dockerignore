@@ -1,0 +1,76 @@
+# Docker build context optimization
+# Excluding these files reduces build context size and improves build speed
+
+# Dependencies - will be installed fresh in the container
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs - will be generated during Docker build
+.next/
+out/
+build/
+dist/
+
+# Git
+.git/
+.gitignore
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.vim
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation and metadata
+README.md
+CHANGELOG.md
+LICENSE
+docs/
+
+# Test files
+coverage/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+__tests__/
+jest.config.*
+cypress/
+playwright/
+
+# Development configuration
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+
+# Kamal configuration (not needed in container)
+.kamal/
+config/deploy.yml
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+Jenkinsfile
+
+# Docker files (to avoid recursive context)
+Dockerfile*
+docker-compose*.yml
+.docker/
+
+# Misc
+*.log
+*.md
+!next.config.js
+!package.json
+!package-lock.json
+!yarn.lock
+!pnpm-lock.yaml
