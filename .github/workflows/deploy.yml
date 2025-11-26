@@ -81,7 +81,7 @@ jobs:
           KAMAL_REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Run database migrations
-        run: kamal app exec --reuse "prisma db push --schema prisma/schema.prisma"
+        run: kamal app exec --reuse "prisma db push --config prisma.config.js"
         env:
           KAMAL_REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
