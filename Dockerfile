@@ -15,6 +15,10 @@ WORKDIR /app
 # Copy package files for dependency installation
 COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
 
+# Copy Prisma files needed for postinstall (prisma generate)
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+
 # Install dependencies based on the available lock file
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
