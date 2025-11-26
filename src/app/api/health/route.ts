@@ -40,9 +40,17 @@ export async function GET(): Promise<NextResponse<HealthStatus>> {
   // Database connectivity check (soft check - doesn't fail health)
   // The app should be considered healthy even if database isn't ready yet
   // This allows Kamal to route traffic to the container while DB is starting
+  // Note: kamal-proxy health check timeout is 3s, so we use a shorter timeout
   try {
     const { prisma } = await import('@/lib/prisma');
-    await prisma.$queryRaw`SELECT 1`;
+    // Add 2 second timeout to prevent health check from hanging
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Database check timeout')), 2000)
+    );
+    await Promise.race([
+      prisma.$queryRaw`SELECT 1`,
+      timeoutPromise
+    ]);
     healthStatus.checks.database = 'ok';
   } catch {
     // Database not ready is a soft failure - app is still healthy
