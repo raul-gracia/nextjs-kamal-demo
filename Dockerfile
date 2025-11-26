@@ -19,6 +19,9 @@ COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 
+# Dummy DATABASE_URL for prisma generate (not used at runtime)
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+
 # Install dependencies based on the available lock file
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
