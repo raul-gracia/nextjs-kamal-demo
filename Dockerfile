@@ -93,9 +93,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 # Static files generated during build
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma schema and config for migrations
+# Copy Prisma schema, config, and dotenv dependency for migrations
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/dotenv ./node_modules/dotenv
 
 # Switch to non-root user
 USER nextjs
