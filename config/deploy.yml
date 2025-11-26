@@ -6,7 +6,7 @@
 service: nextjs-kamal-demo
 
 # Docker image name (pushed to configured registry)
-image: raulgracia/nextjs-kamal-demo
+image: digitalchronos/nextjs-kamal-demo
 
 # Target servers for deployment
 servers:
@@ -20,7 +20,7 @@ servers:
 # Docker registry configuration
 registry:
   server: docker.io
-  username: raulgracia
+  username: digitalchronos
   password:
     - KAMAL_REGISTRY_PASSWORD
 
