@@ -37,16 +37,17 @@ export async function GET(): Promise<NextResponse<HealthStatus>> {
     },
   };
 
-  // Database connectivity check
+  // Database connectivity check (soft check - doesn't fail health)
+  // The app should be considered healthy even if database isn't ready yet
+  // This allows Kamal to route traffic to the container while DB is starting
   try {
     const { prisma } = await import('@/lib/prisma');
     await prisma.$queryRaw`SELECT 1`;
     healthStatus.checks.database = 'ok';
-  } catch (error) {
+  } catch {
+    // Database not ready is a soft failure - app is still healthy
     healthStatus.checks.database = 'error';
-    healthStatus.status = 'unhealthy';
-
-    return NextResponse.json(healthStatus, { status: 503 });
+    // Don't return 503 - let the app start and handle DB errors gracefully
   }
 
   return NextResponse.json(healthStatus, {
