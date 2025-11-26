@@ -87,7 +87,6 @@ accessories:
     directories:
       - nextjs-postgres-data:/var/lib/postgresql/data
     options:
-      restart: unless-stopped
       memory: 256m
 
 # Container logging configuration
