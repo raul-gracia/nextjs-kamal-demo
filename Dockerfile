@@ -23,10 +23,11 @@ COPY prisma.config.ts ./
 ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
 
 # Install dependencies based on the available lock file
+# Use --ignore-scripts to skip postinstall (prisma generate) - we'll run it in builder stage
 RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile --ignore-scripts; \
+  elif [ -f package-lock.json ]; then npm ci --ignore-scripts; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile --ignore-scripts; \
   else echo "No lockfile found." && exit 1; \
   fi
 
@@ -47,6 +48,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Build arguments for environment variables needed at build time
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
+
+# Dummy DATABASE_URL for prisma generate (not used at runtime)
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+
+# Generate Prisma client (needed for Next.js build)
+RUN npx prisma generate
 
 # Build the application
 # Note: Ensure next.config.js has output: 'standalone'
