@@ -79,6 +79,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Install prisma CLI for database migrations
+RUN npm install -g prisma@7.0.1
+
 # Copy necessary files from builder
 # Public assets (if any)
 COPY --from=builder /app/public ./public
@@ -89,6 +92,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 
 # Static files generated during build
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy Prisma schema and config for migrations
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 # Switch to non-root user
 USER nextjs
