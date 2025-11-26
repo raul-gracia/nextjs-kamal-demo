@@ -80,6 +80,11 @@ jobs:
         env:
           KAMAL_REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Run database migrations
+        run: kamal app exec --reuse "npx prisma db push"
+        env:
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Notify deployment success
         if: success()
         run: echo "Deployment to kamal-demo.digitalchronos.app completed successfully!"
